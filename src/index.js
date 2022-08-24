@@ -30,19 +30,19 @@ const convertCurrency = async (from, to, amount) => {
     return conversionJSON;
 };
 
-const createCurrencyDropdown = (currencies, $dropdown) => {
+const createCurrencyDropdown = (currencies, $dropdown, type) => {
     const $dropdownButton = $dropdown.children[0];
 
     const $list = document.createElement("ul");
     $list.className = "dropdown-menu";
 
     $list.onclick = (e) => {
-        changeButtonCurrency(e.target.id, $dropdownButton);
+        changeButtonCurrency(e.target.id.replace(type, ""), $dropdownButton);
     };
 
     currencies.forEach((currency) => {
         $list.innerHTML += `<li>
-        <button class="dropdown-item" type="button" id=${currency}>
+        <button class="dropdown-item" type="button" id=${type + currency}>
             <div class="currency-flag currency-flag-${currency.toLowerCase()}"></div>
             ${currency}
         </button>
@@ -53,8 +53,8 @@ const createCurrencyDropdown = (currencies, $dropdown) => {
 };
 
 getExchangeRates("ARS").then((response) => {
-    createCurrencyDropdown(Object.keys(response.rates), $fromCurrency);
-    createCurrencyDropdown(Object.keys(response.rates), $toCurrency);
+    createCurrencyDropdown(Object.keys(response.rates), $fromCurrency, "from");
+    createCurrencyDropdown(Object.keys(response.rates), $toCurrency, "to");
 });
 
 const changeButtonCurrency = (currency, $boton) => {
@@ -64,9 +64,15 @@ const changeButtonCurrency = (currency, $boton) => {
 };
 
 $convert.onclick = async () => {
-    const fromCurrency = $fromConversionButton.textContent.replace(/\s/g, "");
-    const toCurrency = $toCurrencyButton.textContent.replace(/\s/g, "");
     const amount = Number($amountCurrency.value);
+    if (isNaN(amount)) return;
+
+    const fromCurrency = $fromConversionButton.textContent
+        .replace("from", "")
+        .replace(/\s/g, "");
+    const toCurrency = $toCurrencyButton.textContent
+        .replace("to", "")
+        .replace(/\s/g, "");
 
     convertCurrency(fromCurrency, toCurrency, amount).then((response) => {
         showConversionResults(response);
