@@ -4,7 +4,7 @@
   "description": "Pagina de exchanges rate para argentinaprograma",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cypress-open": "cypress open --browser electron --e2e"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/FrancoGomez/neo-exchange-rates#readme",
   "dependencies": {
     "bootstrap": "^5.2.0"
+  },
+  "devDependencies": {
+    "cypress": "^10.6.0"
   }
 }
