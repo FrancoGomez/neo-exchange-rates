@@ -17,6 +17,10 @@
     font-weight: 800;
 }
 
+.col-input {
+    min-width: 247px;
+}
+
 #from-conversion {
     color: rgb(92, 102, 123);
     font-weight: 600;
