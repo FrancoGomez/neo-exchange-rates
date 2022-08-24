@@ -10,7 +10,6 @@ const $reverseConversion = document.querySelector("#reverse-conversion");
 const $convert = document.querySelector("#convert");
 
 const init = () => {
-    // ARS is just a random
     getExchangeRates().then((response) => {
         createCurrencyDropdown(
             Object.keys(response.rates),
