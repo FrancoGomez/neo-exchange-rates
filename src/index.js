@@ -9,7 +9,19 @@ const $toConversion = document.querySelector("#to-conversion");
 const $reverseConversion = document.querySelector("#reverse-conversion");
 const $convert = document.querySelector("#convert");
 
-const getExchangeRates = async (base) => {
+const init = () => {
+    // ARS is just a random
+    getExchangeRates().then((response) => {
+        createCurrencyDropdown(
+            Object.keys(response.rates),
+            $fromCurrency,
+            "from"
+        );
+        createCurrencyDropdown(Object.keys(response.rates), $toCurrency, "to");
+    });
+};
+
+const getExchangeRates = async (base = "USD") => {
     const response = await fetch(
         `https://api.exchangerate.host/lastest?base=${base}`
     );
@@ -18,6 +30,7 @@ const getExchangeRates = async (base) => {
 };
 
 const getReverseExchangeRate = (rate) => {
+    // 1 / rate gives the reverse rate
     return (1 / rate).toFixed(6);
 };
 
@@ -37,7 +50,8 @@ const createCurrencyDropdown = (currencies, $dropdown, type) => {
     $list.className = "dropdown-menu";
 
     $list.onclick = (e) => {
-        changeButtonCurrency(e.target.id.replace(type, ""), $dropdownButton);
+        const currency = e.target.id.replace(type, "");
+        changeButtonCurrency(currency, $dropdownButton);
     };
 
     currencies.forEach((currency) => {
@@ -52,11 +66,6 @@ const createCurrencyDropdown = (currencies, $dropdown, type) => {
     $dropdown.appendChild($list);
 };
 
-getExchangeRates("ARS").then((response) => {
-    createCurrencyDropdown(Object.keys(response.rates), $fromCurrency, "from");
-    createCurrencyDropdown(Object.keys(response.rates), $toCurrency, "to");
-});
-
 const changeButtonCurrency = (currency, $boton) => {
     $boton.innerHTML = `
     <div class="currency-flag currency-flag-${currency.toLowerCase()}"></div>
@@ -67,12 +76,8 @@ $convert.onclick = async () => {
     const amount = Number($amountCurrency.value);
     if (isNaN(amount)) return;
 
-    const fromCurrency = $fromConversionButton.textContent
-        .replace("from", "")
-        .replace(/\s/g, "");
-    const toCurrency = $toCurrencyButton.textContent
-        .replace("to", "")
-        .replace(/\s/g, "");
+    const fromCurrency = $fromConversionButton.innerText.replace(/\s/g, "");
+    const toCurrency = $toCurrencyButton.innerText.replace(/\s/g, "");
 
     convertCurrency(fromCurrency, toCurrency, amount).then((response) => {
         showConversionResults(response);
@@ -93,3 +98,5 @@ const showConversionResults = ({ query, result }) => {
         query.to
     } = $${getReverseExchangeRate(styledResult)} ${query.from}`;
 };
+
+init();
