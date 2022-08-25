@@ -32,7 +32,9 @@ describe("Test exchange rates", () => {
         cy.get("#reverse-conversion").contains(
             `$${query.amount.toFixed(2)} ${
                 query.to
-            } = $${getReverseExchangeRateCypress(styledResult)} ${query.from}`
+            } = $${getReciprocalExchangeRateCypress(styledResult)} ${
+                query.from
+            }`
         );
     });
 });
@@ -45,7 +47,9 @@ const convertCurrencyCypress = async ({ from, to, amount }) => {
     return conversion.json();
 };
 
-const getReverseExchangeRateCypress = (rate) => {
-    const inverseRate = 1 / rate;
-    return inverseRate.toFixed(6);
+const getReciprocalExchangeRateCypress = (rate) => {
+    if (isNaN(Number(rate))) return;
+    
+    const reciprocalExchangeRateFormula = rate / 1;
+    return reciprocalExchangeRateFormula.toFixed(6);
 };
