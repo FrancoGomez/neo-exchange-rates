@@ -9,15 +9,11 @@ const $toConversion = document.querySelector("#to-conversion");
 const $reverseConversion = document.querySelector("#reverse-conversion");
 const $convert = document.querySelector("#convert");
 
-const init = () => {
-    getExchangeRates().then((response) => {
-        createCurrencyDropdown(
-            Object.keys(response.rates),
-            $fromCurrency,
-            "from"
-        );
-        createCurrencyDropdown(Object.keys(response.rates), $toCurrency, "to");
-    });
+const init = async () => {
+    const { rates } = await getExchangeRates();
+
+    createCurrencyDropdown(Object.keys(rates), $fromCurrency, "from");
+    createCurrencyDropdown(Object.keys(rates), $toCurrency, "to");
 };
 
 const getExchangeRates = async (base = "USD") => {
@@ -29,17 +25,16 @@ const getExchangeRates = async (base = "USD") => {
 };
 
 const getReverseExchangeRate = (rate) => {
-    // 1 / rate gives the reverse rate
-    return (1 / rate).toFixed(6);
+    const inverseRate = 1 / rate;
+    return inverseRate.toFixed(6);
 };
 
 const convertCurrency = async (from, to, amount) => {
     const conversion = await fetch(
         `https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`
     );
-    const conversionJSON = conversion.json();
 
-    return conversionJSON;
+    return conversion.json();
 };
 
 const createCurrencyDropdown = (currencies, $dropdown, type) => {
@@ -78,9 +73,8 @@ $convert.onclick = async () => {
     const fromCurrency = $fromConversionButton.innerText.replace(/\s/g, "");
     const toCurrency = $toCurrencyButton.innerText.replace(/\s/g, "");
 
-    convertCurrency(fromCurrency, toCurrency, amount).then((response) => {
-        showConversionResults(response);
-    });
+    const response = await convertCurrency(fromCurrency, toCurrency, amount);
+    showConversionResults(response);
 };
 
 const showConversionResults = ({ query, result }) => {
