@@ -24,10 +24,10 @@ const getExchangeRates = async (base = "USD") => {
     return response.json();
 };
 
-const getReciprocalExchangeRate = (rate) => {
-    if (isNaN(Number(rate))) return;
+const getReciprocalExchangeRate = (rate, amount) => {
+    if (isNaN(Number(rate)) || isNaN(Number(amount))) return;
 
-    const reciprocalExchangeRateFormula = rate / 1;
+    const reciprocalExchangeRateFormula = (amount / rate) * amount;
     return reciprocalExchangeRateFormula.toFixed(6);
 };
 
@@ -91,7 +91,9 @@ const showConversionResults = ({ query, result }) => {
 
     $reverseConversion.textContent = `$${query.amount.toFixed(2)} ${
         query.to
-    } = $${getReciprocalExchangeRate(styledResult)} ${query.from}`;
+    } = $${getReciprocalExchangeRate(styledResult, query.amount)} ${
+        query.from
+    }`;
 };
 
 init();
